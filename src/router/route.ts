@@ -202,7 +202,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 				name: 'detectionRecord',
 				component: () => import('/@/views/detectionRecord/index.vue'),
 				meta: {
-					title: '违规记录',
+					title: '检测记录',
 					isLink: '',
 					isHide: false,
 					isKeepAlive: true,

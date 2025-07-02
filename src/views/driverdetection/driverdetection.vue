@@ -4,13 +4,13 @@
     <el-row :gutter="15" class="driverdetection-row">
       <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="driverdetection-card">
-          <div class="driverdetection-card-title">各年龄段不佩戴头盔分布</div>
+          <div class="driverdetection-card-title">无盔驾驶行为年龄分布情况</div>
           <div ref="ageChart" class="chart"></div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="driverdetection-card">
-          <div class="driverdetection-card-title">男女性别不戴头盔情况</div>
+          <div class="driverdetection-card-title">无盔驾驶行为性别分布情况</div>
           <div ref="genderChart" class="chart"></div>
         </div>
       </el-col>
@@ -18,13 +18,13 @@
     <el-row :gutter="15" class="driverdetection-row">
       <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="driverdetection-card">
-          <div class="driverdetection-card-title">每天不戴头盔数目</div>
+          <div class="driverdetection-card-title">每日检测无盔驾驶行为数量</div>
           <div ref="dayChart" class="chart"></div>
         </div>
       </el-col>
       <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
         <div class="driverdetection-card">
-          <div class="driverdetection-card-title">不同地区不戴头盔数目</div>
+          <div class="driverdetection-card-title">无盔驾驶行为地区分布</div>
           <div ref="regionChart" class="chart"></div>
         </div>
       </el-col>

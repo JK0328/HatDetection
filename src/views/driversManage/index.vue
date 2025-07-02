@@ -17,9 +17,14 @@
 				</el-button>
 			</div>
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
-				<el-table-column prop="num" label="序号" width="80" align="center" />
+				<el-table-column label="序号" width="80" align="center">
+					<template #default="scope">
+						{{ (state.tableData.param.pageNum - 1) * state.tableData.param.pageSize + scope.$index + 1 }}
+					</template>
+				</el-table-column>
 				<el-table-column prop="name" label="姓名" show-overflow-tooltip width="150" align="center"></el-table-column>
 				<el-table-column prop="sex" label="性别" show-overflow-tooltip width="100" align="center"></el-table-column>
+				<el-table-column prop="age" label="年龄" show-overflow-tooltip width="100" align="center"></el-table-column>
 				<el-table-column prop="licensePlate" label="车牌号码" show-overflow-tooltip width="150" align="center"></el-table-column>
 				<el-table-column prop="phone" label="手机号码" show-overflow-tooltip align="center"></el-table-column>
 				<el-table-column label="操作" width="150">
@@ -78,11 +83,11 @@ const getTableData = () => {
 		})
 		.then((res) => {
 			if (res.code == 0) {
-				state.tableData.data = [];
+				state.tableData.data = res.data.records || [];
+				state.tableData.total = res.data.total || 0;
 				setTimeout(() => {
 					state.tableData.loading = false;
 				}, 500);
-				state.tableData.total = res.data.total;
 			} else {
 				ElMessage({
 					type: 'error',
@@ -92,16 +97,16 @@ const getTableData = () => {
 		});
 };
 
-// 打开新增角色弹窗
+// 打开新增驾驶人弹窗
 const onOpenAddRole = (type: string) => {
 	roleDialogRef.value.openDialog(type);
 };
-// 打开修改角色弹窗
+// 打开修改驾驶人信息弹窗
 const onOpenEditRole = (type: string, row: Object) => {
 	roleDialogRef.value.openDialog(type, row);
 };
 
-// 删除角色
+// 删除驾驶人信息
 const onRowDel = (row: any) => {
 	ElMessageBox.confirm(`此操作将永久删除该信息，是否继续?`, '提示', {
 		confirmButtonText: '确认',
@@ -110,7 +115,7 @@ const onRowDel = (row: any) => {
 	})
 		.then(() => {
 			console.log(row);
-			request.delete('/api/user/' + row.id).then((res) => {
+			request.delete('/api/drivers/' + row.id).then((res) => {
 				if (res.code == 0) {
 					console.log(res.data);
 					ElMessage({

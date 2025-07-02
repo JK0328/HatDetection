@@ -86,9 +86,9 @@ const getTableData = () => {
 					state.tableData.data[i] = res.data.records[i];
 					state.tableData.data[i]['num'] = i + 1;
 					if (state.tableData.data[i]['helmet'] == false) {
-						state.tableData.data[i]['helmet'] = '未佩戴头盔';
+						state.tableData.data[i]['helmet'] = '未佩戴';
 					} else if (state.tableData.data[i]['helmet'] == true) {
-						state.tableData.data[i]['helmet'] = '已佩戴头盔';
+						state.tableData.data[i]['helmet'] = '已佩戴';
 					}
 				}
 				state.tableData.total = res.data.total;
@@ -101,16 +101,16 @@ const getTableData = () => {
 		});
 };
 
-// 打开新增角色弹窗
+// 打开新增检测记录弹窗
 const onOpenAddRole = (type: string) => {
 	roleDialogRef.value.openDialog(type);
 };
-// 打开修改角色弹窗
+// 打开修改检测记录弹窗
 const onOpenEditRole = (type: string, row: Object) => {
 	roleDialogRef.value.openDialog(type, row);
 };
 
-// 删除角色
+// 删除检测记录
 const onRowDel = (row: any) => {
 	ElMessageBox.confirm(`此操作将永久删除该信息，是否继续?`, '提示', {
 		confirmButtonText: '确认',
@@ -119,7 +119,7 @@ const onRowDel = (row: any) => {
 	})
 		.then(() => {
 			console.log(row);
-			request.delete('/api/user/' + row.id).then((res) => {
+			request.delete('/api/detectionRecords/' + row.id).then((res) => {
 				if (res.code == 0) {
 					console.log(res.data);
 					ElMessage({

@@ -1,59 +1,36 @@
 <template>
 	<div class="system-role-dialog-container">
 		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="800px" class="dia">
-			<div class="imgs">
-				<el-upload
-					v-model="state.form.avatar"
-					ref="uploadFile"
-					class="avatar-uploader"
-					action="http://localhost:9999/files/upload"
-					:show-file-list="false"
-					:on-success="handleAvatarSuccessone"
-				>
-					<img v-if="imageUrl" :src="imageUrl" class="avatar" />
-					<el-icon v-if="!imageUrl"><Plus /></el-icon>
-				</el-upload>
-			</div>
-			<el-form ref="roleDialogFormRef" :model="state.form" size="default" label-width="100px">
+			<el-form ref="roleDialogFormRef" :rules="rules" :model="state.form" size="default" label-width="120px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="账号" style="color: #000">
-							<el-input v-model="state.form.username" placeholder="请输入账号" clearable></el-input>
+						<el-form-item label="车牌号码" prop="licensePlate">
+							<el-input v-model="state.form.licensePlate" placeholder="请输入车牌号码" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="密码">
-							<el-input v-model="state.form.password" placeholder="请输入密码" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="姓名" style="color: #000">
-							<el-input v-model="state.form.name" placeholder="请输入姓名" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="性别" prop="sex">
-						<el-select v-model="state.form.sex" placeholder="请选择性别" clearable style="width: 100%;">
-							<el-option label="男" value="男"></el-option>
-							<el-option label="女" value="女"></el-option>
-						</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="Email" prop="email">
-						<el-input v-model="state.form.email" type="email" placeholder="请输入Email" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="手机号码">
-							<el-input v-model="state.form.tel" placeholder="请输入手机号码" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="角色">
-							<el-select v-model="state.form.role" value-key="id" placeholder="请选择注册角色" style="width: 100%">
-								<el-option v-for="item in option" :key="item.id" :label="item.label" :value="item.role" />
+						<el-form-item label="头盔佩戴情况" prop="helmet">
+							<el-select v-model="state.form.helmet" placeholder="请选择头盔佩戴情况" clearable style="width: 100%;">
+								<el-option label="未佩戴" :value="0"></el-option>
+								<el-option label="已佩戴" :value="1"></el-option>
 							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+						<el-form-item label="检测时间" prop="detectionTime">
+							<el-date-picker
+								v-model="state.form.detectionTime"
+								type="datetime"
+								placeholder="选择检测时间"
+								style="width: 100%;"
+								value-format="yyyy-MM-dd HH:mm:ss"
+								@input="$forceUpdate()"
+							></el-date-picker>
+						</el-form-item>
+					</el-col>
+					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+						<el-form-item label="检测地点" prop="detectionAddress">
+							<el-input v-model="state.form.detectionAddress" placeholder="请输入检测地点" clearable></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -80,27 +57,10 @@ const emit = defineEmits(['refresh']);
 
 const imageUrl = ref('');
 const uploadFile = ref<UploadInstance>();
-
-const handleAvatarSuccessone: UploadProps['onSuccess'] = (response, uploadFile) => {
-	console.log(response);
-	imageUrl.value = URL.createObjectURL(uploadFile.raw!);
-	state.form.avatar = response.data;
-};
-
-const option = [
-	{ id: 1, label: '管理员', role: 'admin' },
-	{ id: 2, label: '普通用户', role: 'common' },
-];
-
 // 定义变量内容
 const roleDialogFormRef = ref();
 const state = reactive({
 	form: {} as any,
-	menuData: [] as TreeType[],
-	menuProps: {
-		children: 'children',
-		label: 'label',
-	},
 	dialog: {
 		isShowDialog: false,
 		type: '',
@@ -109,13 +69,29 @@ const state = reactive({
 	},
 });
 
+// 验证规则
+const rules = reactive({
+	licensePlate: [
+		{ required: true, message: '请输入车牌号码', trigger: 'blur' },
+		{ pattern: /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/, message: '请输入正确的车牌号码', trigger: 'blur' },
+	],
+	helmet: [
+		{ required: true, message: '请选择头盔佩戴情况', trigger: 'change' },
+	],
+	detectionTime: [
+		{ required: true, message: '请选择检测时间', trigger: 'change' },
+	],
+	detectionAddress: [
+		{ required: true, message: '请输入检测地点', trigger: 'blur' },
+	],
+});
+
 // 打开弹窗
 const openDialog = (type: string, row: RowRoleType) => {
 	if (type === 'edit') {
 		state.form = row;
 		state.dialog.title = '修改检测记录';
 		state.dialog.submitTxt = '修 改';
-		imageUrl.value = state.form.avatar;
 	} else {
 		state.dialog.title = '新增检测记录';
 		state.dialog.submitTxt = '新 增';
@@ -137,44 +113,51 @@ const onCancel = () => {
 };
 // 提交
 const onSubmit = () => {
-	if (state.form['role'] == '管理员') {
-		state.form['role'] = 'admin';
-	} else if (state.form['role'] == '普通用户') {
-		state.form['role'] = 'common';
-	} else if (state.form['role'] == '其他用户') {
-		state.form['role'] = 'others';
-	}
-	if (state.dialog.title == '修改信息') {
-		request.post('/api/user/update', state.form).then((res) => {
-			if (res.code == 0) {
-				ElMessage.success('修改成功！');
-				setTimeout(() => {
-					closeDialog();
-					emit('refresh');
-				}, 500);
+	roleDialogFormRef.value.validate((valid: boolean) => {
+		if (valid) {
+			if (state.form['helmet'] == '已佩戴') {
+				state.form['helmet'] = 1;
+			} else if (state.form['helmet'] == '未佩戴') {
+				state.form['helmet'] = 0;
+			}
+			console.log(state.form);
+			if (state.dialog.title === '修改检测记录') {
+				request.post('/api/detectionRecords/update', state.form).then((res) => {
+					console.log(res);
+					if (res.code == 0) {
+						ElMessage.success('修改成功！');
+						setTimeout(() => {
+							closeDialog();
+							emit('refresh');
+						}, 500);
+					} else {
+						ElMessage({
+							type: 'error',
+							message: res.msg,
+						});
+					}
+				});
 			} else {
-				ElMessage({
-					type: 'error',
-					message: res.msg,
+				request.post('/api/detectionRecords/', state.form).then((res) => {
+					if (res.code == 0) {
+						ElMessage.success('添加成功！');
+					} else {
+						ElMessage({
+							type: 'error',
+							message: res.msg,
+						});
+					}
+					setTimeout(() => {
+						closeDialog();
+						emit('refresh');
+					}, 500);
 				});
 			}
-		});
-	} else {
-		request.post('/api/user/', state.form).then((res) => {
-			if (res.code == 0) {
-				ElMessage.success('添加成功！');
-			} else {
-				ElMessage({
-					type: 'error',
-					message: res.msg,
-				});
-			}
-			setTimeout(() => {
-				closeDialog();
-				emit('refresh');
-			}, 500);
-		});
-	}
+		} else {
+			ElMessage.error('请输入正确的信息。');
+			return false;
+		}
+	});
 };
 
 // 暴露变量

@@ -1,20 +1,15 @@
 <template>
 	<div class="system-role-dialog-container">
 		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="800px" class="dia">
-			<el-form ref="roleDialogFormRef" :model="state.form" size="default" label-width="100px">
+			<el-form ref="roleDialogFormRef" :rules="rules" :model="state.form" size="default" label-width="100px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="账号" style="color: #000">
-							<el-input v-model="state.form.username" placeholder="请输入账号" clearable></el-input>
+						<el-form-item label="车牌号码" prop="licensePlate">
+						<el-input v-model="state.form.licensePlate" placeholder="请输入车牌号码" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="密码">
-							<el-input v-model="state.form.password" placeholder="请输入密码" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="姓名" style="color: #000">
+						<el-form-item label="姓名" prop="name" style="color: #000">
 							<el-input v-model="state.form.name" placeholder="请输入姓名" clearable></el-input>
 						</el-form-item>
 					</el-col>
@@ -27,20 +22,13 @@
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="Email" prop="email">
-						<el-input v-model="state.form.email" type="email" placeholder="请输入Email" clearable></el-input>
+						<el-form-item label="年龄" prop="age">
+						<el-input v-model.number="state.form.age" placeholder="请输入年龄" clearable type="number"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="手机号码">
-							<el-input v-model="state.form.tel" placeholder="请输入手机号码" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="角色">
-							<el-select v-model="state.form.role" value-key="id" placeholder="请选择注册角色" style="width: 100%">
-								<el-option v-for="item in option" :key="item.id" :label="item.label" :value="item.role" />
-							</el-select>
+						<el-form-item label="手机号码" prop="phone">
+							<el-input v-model="state.form.phone" placeholder="请输入手机号码" clearable></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -67,18 +55,6 @@ const emit = defineEmits(['refresh']);
 
 const imageUrl = ref('');
 const uploadFile = ref<UploadInstance>();
-
-const handleAvatarSuccessone: UploadProps['onSuccess'] = (response, uploadFile) => {
-	console.log(response);
-	imageUrl.value = URL.createObjectURL(uploadFile.raw!);
-	state.form.avatar = response.data;
-};
-
-const option = [
-	{ id: 1, label: '管理员', role: 'admin' },
-	{ id: 2, label: '普通用户', role: 'common' },
-];
-
 // 定义变量内容
 const roleDialogFormRef = ref();
 const state = reactive({
@@ -94,6 +70,30 @@ const state = reactive({
 		title: '',
 		submitTxt: '',
 	},
+});
+
+// 验证规则
+const rules = reactive({
+  name: [
+    { required: true, message: '请输入姓名', trigger: 'blur' },
+    { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' },
+  ],
+  sex: [
+    { required: true, message: '请选择性别', trigger: 'change' },
+  ],
+  age: [
+    { required: true, message: '请输入年龄', trigger: 'blur' },
+    { type: 'number', message: '年龄必须是数字', trigger: 'blur' },
+    // { min: 1, max: 120, message: '年龄必须在1到120之间', trigger: 'blur' },
+  ],
+  licensePlate: [
+		{ required: true, message: '请输入车牌号码', trigger: 'blur' },
+		{ pattern: /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/, message: '请输入正确的车牌号码', trigger: 'blur' },
+	],
+  phone: [
+    { required: true, message: '请输入手机号码', trigger: 'blur' },
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' },
+  ],
 });
 
 // 打开弹窗
@@ -124,37 +124,47 @@ const onCancel = () => {
 };
 // 提交
 const onSubmit = () => {
-	if (state.dialog.title == '修改信息') {
-		request.post('/api/user/update', state.form).then((res) => {
-			if (res.code == 0) {
-				ElMessage.success('修改成功！');
-				setTimeout(() => {
-					closeDialog();
-					emit('refresh');
-				}, 500);
+	roleDialogFormRef.value.validate((valid: boolean) => {
+		if (valid) {
+			if (state.dialog.title == '修改驾驶人信息') {
+				console.log(state.form);
+				request.post('/api/drivers/update', state.form).then((res) => {
+					if (res.code == 0) {
+						console.log('修改成功！');
+						ElMessage.success('修改成功！');
+						setTimeout(() => {
+							closeDialog();
+							emit('refresh');
+						}, 500);
+					} else {
+						console.log('修改失败！');
+						ElMessage({
+							type: 'error',
+							message: res.msg,
+						});
+					}
+				});
 			} else {
-				ElMessage({
-					type: 'error',
-					message: res.msg,
+				request.post('/api/drivers/', state.form).then((res) => {
+					if (res.code == 0) {
+						ElMessage.success('添加成功！');
+					} else {
+						ElMessage({
+							type: 'error',
+							message: res.msg,
+						});
+					}
+					setTimeout(() => {
+						closeDialog();
+						emit('refresh');
+					}, 500);
 				});
 			}
-		});
-	} else {
-		request.post('/api/user/', state.form).then((res) => {
-			if (res.code == 0) {
-				ElMessage.success('添加成功！');
-			} else {
-				ElMessage({
-					type: 'error',
-					message: res.msg,
-				});
-			}
-			setTimeout(() => {
-				closeDialog();
-				emit('refresh');
-			}, 500);
-		});
-	}
+		} else {
+			ElMessage.error('请输入正确的信息。');
+			return false;
+		}
+	});
 };
 
 // 暴露变量
