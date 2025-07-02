@@ -226,6 +226,21 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 					roles: ['admin', 'common', 'others'],
 					icon: 'iconfont icon-gerenzhongxin',
 				},
+			},
+			{
+				path: '/driverdetection',
+				name: 'driverdetection',
+				component: () => import('/@/views/driverdetection/driverdetection.vue'),
+				meta: {
+					title: '驾驶人头盔检测分析',
+					isLink: '',
+					isHide: false,
+					isKeepAlive: true,
+					isAffix: false,
+					isIframe: false,
+					roles: ['admin'],
+					icon: 'iconfont icon-_jiashirenxinxichaxun',
+				},
 			}
 		],
 	},
