@@ -11,7 +11,7 @@ import com.example.Kcsj.entity.User;
 import com.example.Kcsj.mapper.DriversMapper;
 import com.example.Kcsj.mapper.UserMapper;
 import org.springframework.web.bind.annotation.*;
-
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Objects;
@@ -35,7 +35,7 @@ public class DriversController {
                               @RequestParam(defaultValue = "10") Integer pageSize,
                               @RequestParam(defaultValue = "") String search) {
         LambdaQueryWrapper<Drivers> wrapper = Wrappers.<Drivers>lambdaQuery();
-        wrapper.orderByDesc(Drivers::getLicensePlate);
+        wrapper.orderByDesc(Drivers::getId);
         if (StrUtil.isNotBlank(search)) {
             wrapper.like(Drivers::getLicensePlate, search);
         }
@@ -53,18 +53,25 @@ public class DriversController {
     public Result<?> GetAll() {
         return Result.success(driversMapper.selectList(null));
     }
-    //更新驾驶人信息
+//    更新驾驶人信息
     @PostMapping("/update")
     public Result<?> updates(@RequestBody Drivers drivers) {
         driversMapper.updateById(drivers);
         return Result.success();
     }
-    //根据车牌号删除驾驶人信息
-    @DeleteMapping("/delete{licensePlate}")
-    public Result<?> delete(@PathVariable int licensePlate) {
-        driversMapper.deleteById(licensePlate);
+
+    //根据用户ID删除用户信息
+    @DeleteMapping("/{id}")
+    public Result<?> delete(@PathVariable int id) {
+        driversMapper.deleteById(id);
         return Result.success();
     }
+//    //根据车牌号删除驾驶人信息
+//    @DeleteMapping("/delete{licensePlate}")
+//    public Result<?> delete(@PathVariable int licensePlate) {
+//        driversMapper.deleteById(licensePlate);
+//        return Result.success();
+//    }
     //保存新驾驶人信息
     @PostMapping
     public Result<?> save(@RequestBody Drivers drivers) {

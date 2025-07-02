@@ -12,8 +12,8 @@ import java.util.Map;
 @Mapper
 public interface DetectionRecordsMapper  extends BaseMapper<DetectionRecords>{
     //根据车牌查询所有违规记录
-    @Select("select * from detectionRecords where licensePlate = #{licensePlate}")
-    User selectByLicensePlate(String licensePlate);
+    @Select("select * from detectionRecords where license_plate = #{license_plate}")
+    User selectByLicensePlate(String license_plate);
 
     /**
      * 统计各年龄段不戴头盔人数

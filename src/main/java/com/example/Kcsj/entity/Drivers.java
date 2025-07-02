@@ -18,6 +18,8 @@ import java.util.Date;
 public class Drivers {
 
     @TableId(type = IdType.INPUT)
+    private Integer id;
+
     private String licensePlate;
 
     private String name;
@@ -30,6 +32,14 @@ public class Drivers {
 
     public String getLicensePlate() {
         return licensePlate;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public void setLicensePlate(String licensePlate) {

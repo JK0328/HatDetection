@@ -37,7 +37,7 @@ public class DetectionRecordsController {
                               @RequestParam(defaultValue = "10") Integer pageSize,
                               @RequestParam(defaultValue = "") String search) {
         LambdaQueryWrapper<DetectionRecords> wrapper = Wrappers.<DetectionRecords>lambdaQuery();
-        wrapper.orderByDesc(DetectionRecords::getLicensePlate);
+        wrapper.orderByAsc(DetectionRecords::getDetectionTime);
         if (StrUtil.isNotBlank(search)) {
             wrapper.like(DetectionRecords::getLicensePlate, search);
         }
@@ -45,11 +45,11 @@ public class DetectionRecordsController {
         return Result.success(UserPage);
     }
     //根据车牌号查询检测结果
-    @GetMapping("/search{licensePlate}")
-    public Result<?> getByLicensePlate(@PathVariable String licensePlate) {
-        System.out.println(licensePlate);
-        return Result.success(detectionRecordsMapper.selectByLicensePlate(licensePlate));
-    }
+//    @GetMapping("/search{licensePlate}")
+//    public Result<?> getByLicensePlate(@PathVariable String licensePlate) {
+//        System.out.println(licensePlate);
+//        return Result.success(detectionRecordsMapper.selectByLicensePlate(licensePlate));
+//    }
     //查询所有检测结果
     @GetMapping("/all")
     public Result<?> GetAll() {
@@ -62,9 +62,9 @@ public class DetectionRecordsController {
         return Result.success();
     }
     //根据车牌号删除检测结果
-    @DeleteMapping("/delete{licensePlate}")
-    public Result<?> delete(@PathVariable int licensePlate) {
-        detectionRecordsMapper.deleteById(licensePlate);
+    @DeleteMapping("/{id}")
+    public Result<?> delete(@PathVariable int id) {
+        detectionRecordsMapper.deleteById(id);
         return Result.success();
     }
     //保存新检测结果
