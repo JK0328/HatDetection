@@ -23,7 +23,7 @@
 								type="datetime"
 								placeholder="选择检测时间"
 								style="width: 100%;"
-								value-format="yyyy-MM-dd HH:mm:ss"
+								value-format="YYYY-MM-DD HH:mm:ss"
 								@input="$forceUpdate()"
 							></el-date-picker>
 						</el-form-item>
@@ -116,9 +116,9 @@ const onSubmit = () => {
 	roleDialogFormRef.value.validate((valid: boolean) => {
 		if (valid) {
 			if (state.form['helmet'] == '已佩戴') {
-				state.form['helmet'] = 1;
+				state.form['helmet'] = true;
 			} else if (state.form['helmet'] == '未佩戴') {
-				state.form['helmet'] = 0;
+				state.form['helmet'] = false;
 			}
 			console.log(state.form);
 			if (state.dialog.title === '修改检测记录') {
