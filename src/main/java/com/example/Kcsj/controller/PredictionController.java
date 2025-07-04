@@ -87,7 +87,7 @@ public class PredictionController {
             this.suggestion = suggestion;
         }
     }
-
+    //预测
     @PostMapping("/predict")
     public Result<?> predict(@RequestBody PredictRequest request) {
         if (request == null || request.getInputImg() == null || request.getInputImg().isEmpty()) {
@@ -116,7 +116,7 @@ public class PredictionController {
                 imgRecords.setUsername(request.getUsername());
                 imgRecords.setStartTime(request.getStartTime());
                 imgRecords.setAi(request.getAi());
-                imgRecords.setLable(String.valueOf(responses.get("label")));
+                imgRecords.setLabel(String.valueOf(responses.get("label")));
                 imgRecords.setConfidence(String.valueOf(responses.get("confidence")));
                 imgRecords.setAllTime(String.valueOf(responses.get("allTime")));
                 imgRecords.setOutImg(String.valueOf(responses.get("outImg")));
@@ -129,6 +129,7 @@ public class PredictionController {
         }
     }
 
+    //获取文件名列表
     @GetMapping("/file_names")
     public Result<?> getFileNames() {
         try {
